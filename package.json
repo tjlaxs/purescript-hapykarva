@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts":
+  { "build": "pulp build --to dist/build.js"
+  , "watch": "pulp --watch build --to dist/build.js"
+  },
+  "devDependencies": {
+    "pulp": "^11.0.0",
+    "purescript": "^0.11.7"
+  }
+}
