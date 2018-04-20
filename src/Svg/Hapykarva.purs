@@ -4,9 +4,9 @@ import Prelude
 import Halogen as H
 import Halogen.HTML as HH
 import Data.Maybe (Maybe(..))
-import Data.Array (head, tail, foldr, length, range, zip, cons)
+import Data.Array (head, tail, foldr, length, range, zip)
 import Data.Int (toNumber)
-import Data.Tuple (Tuple(..), fst, snd)
+import Data.Tuple (Tuple, fst, snd)
 import Data.String (joinWith)
 
 type State = 
