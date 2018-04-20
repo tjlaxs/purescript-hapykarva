@@ -30,7 +30,7 @@ hapykarva =
     where
  
     initialState :: State
-    initialState = { data: [10.0, 22.0, -11.0, 30.0] }
+    initialState = { data: [10.0, 22.0, -11.0, 30.0, -33.0] }
 
     render :: State -> H.ComponentHTML Query
     render state =

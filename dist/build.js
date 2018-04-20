@@ -8789,7 +8789,7 @@ var PS = {};
           return elem("svg")([ attr("viewBox")("0 0 " + (Data_Show.show(Data_Show.showInt)(100) + (" " + Data_Show.show(Data_Show.showInt)(100)))), attr("class")("Icon Icon-foo") ])([ elem("path")([ attr("d")(path), attr("fill")("none"), attr("stroke")("grey"), attr("stroke-linecap")("round"), attr("stroke-linejoin")("round") ])([  ]) ]);
       };
       var initialState = {
-          data: [ 10.0, 22.0, -11.0, 30.0 ]
+          data: [ 10.0, 22.0, -11.0, 30.0, -33.0 ]
       };
       var $$eval = function (v) {
           return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.get(Halogen_Query_HalogenM.monadStateHalogenM))(function (v1) {
