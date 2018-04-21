@@ -8805,6 +8805,7 @@ var PS = {};
   var Data_EuclideanRing = PS["Data.EuclideanRing"];
   var Data_Function = PS["Data.Function"];
   var Data_Functor = PS["Data.Functor"];
+  var Data_Int = PS["Data.Int"];
   var Data_Maybe = PS["Data.Maybe"];
   var Data_Ring = PS["Data.Ring"];
   var Data_Semigroup = PS["Data.Semigroup"];
@@ -8831,19 +8832,25 @@ var PS = {};
   })();
   var hapykarva = (function () {
       var render = function (state) {
+          var xpad = Data_Int.toNumber(100) * 1.0e-2;
+          var vbx = -xpad;
+          var vbw = Data_Int.toNumber(100) + 2.0 * xpad;
           var spc = 100 / (Data_Array.length(state.data) - 1 | 0) | 0;
           var xRange = Data_Functor.map(Data_Functor.functorArray)(function (x) {
               return spc * x | 0;
           })(Data_Array.range(0)(Data_Array.length(state.data) - 1 | 0));
           var ps = Data_Array.zip(xRange)(state.data);
           var svgPath = Svg_Path.path(100)(100)(ps);
+          var ypad = Data_Int.toNumber(100) * 1.0e-2;
+          var vbh = Data_Int.toNumber(100) + 2.0 * ypad;
+          var vby = -ypad;
           var elem = function ($5) {
               return Halogen_HTML_Elements.elementNS("http://www.w3.org/2000/svg")(Halogen_VDom_Types.ElemName($5));
           };
           var attr = function ($6) {
               return Halogen_HTML_Properties.attr(Halogen_HTML_Core.AttrName($6));
           };
-          return elem("svg")([ attr("viewBox")("0 0 " + (Data_Show.show(Data_Show.showInt)(100) + (" " + Data_Show.show(Data_Show.showInt)(100)))), attr("class")("Icon Icon-foo") ])([ elem("path")([ attr("d")(svgPath), attr("fill")("none"), attr("stroke")("grey"), attr("stroke-linecap")("round"), attr("stroke-linejoin")("round") ])([  ]) ]);
+          return elem("svg")([ attr("viewBox")(Data_Show.show(Data_Show.showNumber)(vbx) + (" " + (Data_Show.show(Data_Show.showNumber)(vby) + (" " + (Data_Show.show(Data_Show.showNumber)(vbw) + (" " + Data_Show.show(Data_Show.showNumber)(vbh))))))), attr("class")("Icon Icon-foo") ])([ elem("path")([ attr("d")(svgPath), attr("fill")("none"), attr("stroke")("grey"), attr("stroke-linecap")("round"), attr("stroke-linejoin")("round") ])([  ]) ]);
       };
       var initialState = {
           data: [ 13.0, 33.0, 1.0, -14.0 ]
