@@ -4,10 +4,8 @@ import Prelude
 import Halogen as H
 import Halogen.HTML as HH
 import Data.Maybe (Maybe(..))
-import Data.Array (head, tail, foldr, length, range, zip)
-import Data.Int (toNumber)
-import Data.Tuple (Tuple, fst, snd)
-import Data.String (joinWith)
+import Data.Array (length, range, zip)
+import Svg.Path (path)
 
 type State = 
     { data :: Array Number
@@ -30,45 +28,27 @@ hapykarva =
     where
  
     initialState :: State
-    initialState = { data: [10.0, 22.0, -11.0, 30.0, -33.0] }
+    initialState = { data: [13.0, 33.0, 1.0, -14.0] }
 
     render :: State -> H.ComponentHTML Query
     render state =
         let
-            width = 100
-            height = 100
-
             elem = HH.elementNS (H.Namespace "http://www.w3.org/2000/svg") <<< H.ElemName
             attr = HH.attr <<< H.AttrName
 
+            width = 100
+            height = 100
             spc = width / (length state.data - 1)
-            yMin = foldr min 0.0 state.data
-            yMax = foldr max 0.0 state.data
-            k = (negate <<< toNumber) height / (yMax - yMin)
-            c = negate (k * yMax)
-            interpolate x = k * x + c
-
             xRange = map (\x -> spc * x) $ range 0 (length state.data - 1)
-            points = zip xRange state.data
-            path = moveTo (head points) <> drawLines (tail points)
-                where
-                showPoint :: Tuple Int Number -> String
-                showPoint p = show (fst p) <> "," <> show (interpolate (snd p))
-
-                moveTo :: Maybe (Tuple Int Number) -> String
-                moveTo (Nothing) = ""
-                moveTo (Just p) = "M" <> showPoint p
-
-                drawLines :: Maybe (Array (Tuple Int Number)) -> String
-                drawLines Nothing = ""
-                drawLines (Just ps) = joinWith "" $ map (\p -> "L" <> showPoint p) ps
+            ps = zip xRange state.data
+            svgPath = path width height ps
         in
             elem "svg"
                 [ attr "viewBox" $ "0 0 " <> show width <> " " <> show height
                 , attr "class" "Icon Icon-foo"
                 ]
                 [ elem "path"
-                    [ attr "d" $ path
+                    [ attr "d" $ svgPath
                     , attr "fill" "none"
                     , attr "stroke" "grey"
                     , attr "stroke-linecap" "round"

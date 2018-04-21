@@ -8704,9 +8704,6 @@ var PS = {};
 })(PS["Halogen.VDom.Driver"] = PS["Halogen.VDom.Driver"] || {});
 (function(exports) {
     "use strict";
-  var Control_Applicative = PS["Control.Applicative"];
-  var Control_Bind = PS["Control.Bind"];
-  var Control_Monad_State_Class = PS["Control.Monad.State.Class"];
   var Control_Semigroupoid = PS["Control.Semigroupoid"];
   var Data_Array = PS["Data.Array"];
   var Data_EuclideanRing = PS["Data.EuclideanRing"];
@@ -8722,6 +8719,97 @@ var PS = {};
   var Data_Show = PS["Data.Show"];
   var Data_String = PS["Data.String"];
   var Data_Tuple = PS["Data.Tuple"];
+  var Prelude = PS["Prelude"];        
+  var showPoint = function (p) {
+      return Data_Show.show(Data_Show.showInt)(Data_Tuple.fst(p)) + ("," + Data_Show.show(Data_Show.showNumber)(Data_Tuple.snd(p)));
+  };
+  var moveTo = function (v) {
+      if (v instanceof Data_Maybe.Nothing) {
+          return "";
+      };
+      if (v instanceof Data_Maybe.Just) {
+          return "M" + showPoint(v.value0);
+      };
+      throw new Error("Failed pattern match at Svg.Path line 34, column 1 - line 34, column 32: " + [ v.constructor.name ]);
+  };
+  var interpolatePoints = function (w) {
+      return function (h) {
+          return function (ps) {
+              var ys = Data_Functor.map(Data_Functor.functorArray)(Data_Tuple.snd)(ps);
+              var ymin = Data_Foldable.foldr(Data_Foldable.foldableArray)(Data_Ord.min(Data_Ord.ordNumber))(0.0)(ys);
+              var ymax = Data_Foldable.foldr(Data_Foldable.foldableArray)(Data_Ord.max(Data_Ord.ordNumber))(0.0)(ys);
+              var interpolate = function (height) {
+                  return function (ymax1) {
+                      return function (ymin1) {
+                          return function (x) {
+                              var fk = function (height1) {
+                                  return function (ymax2) {
+                                      return function (ymin2) {
+                                          return -Data_Int.toNumber(height1) / (ymax2 - ymin2);
+                                      };
+                                  };
+                              };
+                              var k = fk(height)(ymax1)(ymin1);
+                              var fc = function (ymax2) {
+                                  return function (k1) {
+                                      return -(k1 * ymax2);
+                                  };
+                              };
+                              var c = fc(ymax1)(k);
+                              return k * x + c;
+                          };
+                      };
+                  };
+              };
+              return Data_Functor.map(Data_Functor.functorArray)(function (v) {
+                  return Data_Tuple.Tuple.create(v.value0)(interpolate(h)(ymax)(ymin)(v.value1));
+              })(ps);
+          };
+      };
+  };
+  var drawLines = function (v) {
+      if (v instanceof Data_Maybe.Nothing) {
+          return "";
+      };
+      if (v instanceof Data_Maybe.Just) {
+          return Data_String.joinWith("")(Data_Functor.map(Data_Functor.functorArray)(function (p) {
+              return "L" + showPoint(p);
+          })(v.value0));
+      };
+      throw new Error("Failed pattern match at Svg.Path line 38, column 1 - line 38, column 43: " + [ v.constructor.name ]);
+  };
+  var createPath = function (ps) {
+      return moveTo(Data_Array.head(ps)) + drawLines(Data_Array.tail(ps));
+  };
+  var path = function (w) {
+      return function (h) {
+          return function (ps) {
+              return createPath(interpolatePoints(w)(h)(ps));
+          };
+      };
+  };
+  exports["interpolatePoints"] = interpolatePoints;
+  exports["path"] = path;
+  exports["createPath"] = createPath;
+  exports["showPoint"] = showPoint;
+  exports["moveTo"] = moveTo;
+  exports["drawLines"] = drawLines;
+})(PS["Svg.Path"] = PS["Svg.Path"] || {});
+(function(exports) {
+    "use strict";
+  var Control_Applicative = PS["Control.Applicative"];
+  var Control_Bind = PS["Control.Bind"];
+  var Control_Monad_State_Class = PS["Control.Monad.State.Class"];
+  var Control_Semigroupoid = PS["Control.Semigroupoid"];
+  var Data_Array = PS["Data.Array"];
+  var Data_EuclideanRing = PS["Data.EuclideanRing"];
+  var Data_Function = PS["Data.Function"];
+  var Data_Functor = PS["Data.Functor"];
+  var Data_Maybe = PS["Data.Maybe"];
+  var Data_Ring = PS["Data.Ring"];
+  var Data_Semigroup = PS["Data.Semigroup"];
+  var Data_Semiring = PS["Data.Semiring"];
+  var Data_Show = PS["Data.Show"];
   var Halogen = PS["Halogen"];
   var Halogen_Component = PS["Halogen.Component"];
   var Halogen_HTML = PS["Halogen.HTML"];
@@ -8731,6 +8819,7 @@ var PS = {};
   var Halogen_Query_HalogenM = PS["Halogen.Query.HalogenM"];
   var Halogen_VDom_Types = PS["Halogen.VDom.Types"];
   var Prelude = PS["Prelude"];
+  var Svg_Path = PS["Svg.Path"];
   var UpdatedData = (function () {
       function UpdatedData(value0) {
           this.value0 = value0;
@@ -8742,54 +8831,22 @@ var PS = {};
   })();
   var hapykarva = (function () {
       var render = function (state) {
-          var yMin = Data_Foldable.foldr(Data_Foldable.foldableArray)(Data_Ord.min(Data_Ord.ordNumber))(0.0)(state.data);
-          var yMax = Data_Foldable.foldr(Data_Foldable.foldableArray)(Data_Ord.max(Data_Ord.ordNumber))(0.0)(state.data);
           var spc = 100 / (Data_Array.length(state.data) - 1 | 0) | 0;
           var xRange = Data_Functor.map(Data_Functor.functorArray)(function (x) {
               return spc * x | 0;
           })(Data_Array.range(0)(Data_Array.length(state.data) - 1 | 0));
-          var points = Data_Array.zip(xRange)(state.data);
-          var k = -Data_Int.toNumber(100) / (yMax - yMin);
-          var elem = function ($11) {
-              return Halogen_HTML_Elements.elementNS("http://www.w3.org/2000/svg")(Halogen_VDom_Types.ElemName($11));
+          var ps = Data_Array.zip(xRange)(state.data);
+          var svgPath = Svg_Path.path(100)(100)(ps);
+          var elem = function ($5) {
+              return Halogen_HTML_Elements.elementNS("http://www.w3.org/2000/svg")(Halogen_VDom_Types.ElemName($5));
           };
-          var c = -(k * yMax);
-          var interpolate = function (x) {
-              return k * x + c;
+          var attr = function ($6) {
+              return Halogen_HTML_Properties.attr(Halogen_HTML_Core.AttrName($6));
           };
-          var path = (function () {
-              var showPoint = function (p) {
-                  return Data_Show.show(Data_Show.showInt)(Data_Tuple.fst(p)) + ("," + Data_Show.show(Data_Show.showNumber)(interpolate(Data_Tuple.snd(p))));
-              };
-              var moveTo = function (v) {
-                  if (v instanceof Data_Maybe.Nothing) {
-                      return "";
-                  };
-                  if (v instanceof Data_Maybe.Just) {
-                      return "M" + showPoint(v.value0);
-                  };
-                  throw new Error("Failed pattern match at Svg.Hapykarva line 58, column 17 - line 58, column 61: " + [ v.constructor.name ]);
-              };
-              var drawLines = function (v) {
-                  if (v instanceof Data_Maybe.Nothing) {
-                      return "";
-                  };
-                  if (v instanceof Data_Maybe.Just) {
-                      return Data_String.joinWith("")(Data_Functor.map(Data_Functor.functorArray)(function (p) {
-                          return "L" + showPoint(p);
-                      })(v.value0));
-                  };
-                  throw new Error("Failed pattern match at Svg.Hapykarva line 62, column 17 - line 62, column 72: " + [ v.constructor.name ]);
-              };
-              return moveTo(Data_Array.head(points)) + drawLines(Data_Array.tail(points));
-          })();
-          var attr = function ($12) {
-              return Halogen_HTML_Properties.attr(Halogen_HTML_Core.AttrName($12));
-          };
-          return elem("svg")([ attr("viewBox")("0 0 " + (Data_Show.show(Data_Show.showInt)(100) + (" " + Data_Show.show(Data_Show.showInt)(100)))), attr("class")("Icon Icon-foo") ])([ elem("path")([ attr("d")(path), attr("fill")("none"), attr("stroke")("grey"), attr("stroke-linecap")("round"), attr("stroke-linejoin")("round") ])([  ]) ]);
+          return elem("svg")([ attr("viewBox")("0 0 " + (Data_Show.show(Data_Show.showInt)(100) + (" " + Data_Show.show(Data_Show.showInt)(100)))), attr("class")("Icon Icon-foo") ])([ elem("path")([ attr("d")(svgPath), attr("fill")("none"), attr("stroke")("grey"), attr("stroke-linecap")("round"), attr("stroke-linejoin")("round") ])([  ]) ]);
       };
       var initialState = {
-          data: [ 10.0, 22.0, -11.0, 30.0, -33.0 ]
+          data: [ 13.0, 33.0, 1.0, -14.0 ]
       };
       var $$eval = function (v) {
           return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.get(Halogen_Query_HalogenM.monadStateHalogenM))(function (v1) {
