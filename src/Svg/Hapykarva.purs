@@ -13,7 +13,7 @@ type State =
     }
 
 data Query a
-    = Toggle a
+    = UpdateData (Array Number) a
 
 data Message
     = UpdatedData (Array Number)
@@ -67,8 +67,7 @@ hapykarva =
                 ]
     
     eval :: Query ~> H.ComponentDSL State Query Message m
-    eval (Toggle next) = do
-        state <- H.get
-        H.put state
-        H.raise $ UpdatedData state.data
+    eval (UpdateData nd next) = do
+        H.modify (_ { data = nd })
+        H.raise $ UpdatedData nd
         pure next
