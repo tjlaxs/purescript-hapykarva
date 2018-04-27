@@ -51,4 +51,5 @@ component =
         UpdateData (HK.UpdatedData _) next -> do
             pure next
         RefreshData next -> do
+            H.modify \st -> st { sparklinedata = [1.0, 3.0, 1.3, -2.0, -1.3] }
             pure next
