@@ -2,6 +2,7 @@ module Container where
 
 import Prelude
 import Data.Maybe (Maybe(..))
+import Data.Array (reverse)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -51,5 +52,5 @@ component =
         UpdateData (HK.UpdatedData _) next -> do
             pure next
         RefreshData next -> do
-            H.modify \st -> st { sparklinedata = [1.0, 3.0, 1.3, -2.0, -1.3] }
+            H.modify \st -> st { sparklinedata = reverse st.sparklinedata }
             pure next
