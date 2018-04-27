@@ -3,7 +3,7 @@ module Svg.Hapykarva where
 import Prelude
 import Halogen as H
 import Halogen.HTML as HH
-import Data.Maybe (Maybe(..))
+import Halogen.HTML.Events as HE
 import Data.Array (length, range, zip)
 import Data.Int (toNumber)
 import Svg.Path (path)
@@ -12,19 +12,21 @@ type State =
     { data :: Array Number
     }
 
+type Input = Array Number
+
 data Query a
     = UpdateData (Array Number) a
 
 data Message
     = UpdatedData (Array Number)
 
-hapykarva :: forall m. H.Component HH.HTML Query Unit Message m
-hapykarva =
+component :: forall m. H.Component HH.HTML Query Input Message m
+component =
     H.component
         { initialState: const initialState
         , render
         , eval
-        , receiver: const Nothing
+        , receiver: HE.input UpdateData
         }
     where
  
