@@ -32,7 +32,7 @@ component =
     
     initialState :: State
     initialState =
-        { sparklinedata: [1.0, 2.5, 3.0, -1.9, 0.0]
+        { sparklinedata: [1.0, 2.9, 2.5, 3.0, -1.9, 0.0]
         }
 
     render :: State -> H.ParentHTML Query HK.Query Slot m

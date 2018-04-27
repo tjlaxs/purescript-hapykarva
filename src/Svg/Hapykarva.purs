@@ -31,7 +31,7 @@ component =
     where
  
     initialState :: State
-    initialState = { data: [13.0, 33.0, 1.0, -14.0] }
+    initialState = { data: [0.0, 0.01] }
 
     render :: State -> H.ComponentHTML Query
     render state =
