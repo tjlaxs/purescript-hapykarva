@@ -29,7 +29,7 @@ component =
         , receiver: const Nothing
         }
     where
-    
+
     initialState :: State
     initialState =
         { sparklinedata: [1.0, 2.9, 2.5, 3.0, -1.9, 0.0]
@@ -46,11 +46,11 @@ component =
                     [ HH.text "Update data" ]
                 ]
             ]
-    
+
     eval :: Query ~> H.ParentDSL State Query HK.Query Slot Void m
     eval = case _ of
         UpdateData (HK.UpdatedData _) next -> do
             pure next
         RefreshData next -> do
-            H.modify \st -> st { sparklinedata = reverse st.sparklinedata }
+            H.modify_ \st -> st { sparklinedata = reverse st.sparklinedata }
             pure next
