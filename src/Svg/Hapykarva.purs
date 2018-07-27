@@ -8,7 +8,7 @@ import Data.Array (length, range, zip)
 import Data.Int (toNumber)
 import Svg.Path (path)
 
-type State = 
+type State =
     { data :: Array Number
     }
 
@@ -29,7 +29,7 @@ component =
         , receiver: HE.input UpdateData
         }
     where
- 
+
     initialState :: State
     initialState = { data: [0.0, 0.01] }
 
@@ -67,9 +67,9 @@ component =
                     ]
                     []
                 ]
-    
+
     eval :: Query ~> H.ComponentDSL State Query Message m
     eval (UpdateData nd next) = do
-        H.modify (_ { data = nd })
+        H.modify_ (_ { data = nd })
         H.raise $ UpdatedData nd
         pure next
