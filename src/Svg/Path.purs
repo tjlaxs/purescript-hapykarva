@@ -10,17 +10,15 @@ import Data.Tuple (Tuple(..), fst, snd)
 type Point = Tuple Int Number
 
 interpolatePoints :: Int -> Int -> Array Point -> Array Point
-interpolatePoints w h ps = map (\(Tuple x y) -> Tuple x $ interpolate h ymax ymin y) ps
+interpolatePoints w h ps = map (\(Tuple x y) -> Tuple x $ interpolate y) ps
     where
         ys = map snd ps
         ymin = foldr min 0.0 ys
         ymax = foldr max 0.0 ys
-        interpolate height ymax ymin x = k * x + c
+        interpolate x = k * x + c
             where
-                fk height ymax ymin = (negate <<< toNumber) height / (ymax - ymin)
-                fc ymax k = negate (k * ymax)
-                k = fk height ymax ymin
-                c = fc ymax k
+                k = (negate <<< toNumber) h / (ymax - ymin)
+                c = negate (k * ymax)
 
 path :: Int -> Int -> Array Point -> String
 path w h ps = createPath $ interpolatePoints w h ps
